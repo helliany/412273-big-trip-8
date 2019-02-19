@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Ольга Юрманова](https://up.htmlacademy.ru/ecmascript/8/user/412273).
-* Наставник: `Неизвестно`.
+* Наставник: [Арсений Ильяшов](https://up.htmlacademy.ru/ecmascript/8/user/40943).
 
 ---
 

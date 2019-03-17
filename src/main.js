@@ -1,15 +1,20 @@
 import {FILTERS, POINT_NUMBER} from "./data";
 import {getFilterElement} from "./make-filter";
-import {getPointElement} from "./make-point";
+import getPointElement from "./make-point";
+import {events} from "./get-event";
+import {getRandomNumber} from "./utils";
+import lodash from 'lodash';
 
 const filterWrapper = document.querySelector(`.trip-controls__menus`);
 const pointWrapper = document.querySelector(`.trip-day`);
 
-const randomizeCards = () => {
-  const points = document.querySelector(`.trip-day__items`);
-  const n = getRandomNumber();
-  pointWrapper.removeChild(points);
-  renderCards(n);
+const points = lodash.shuffle(events.map(getPointElement));
+
+const randomizePoints = () => {
+  const pointItems = document.querySelector(`.trip-day__items`);
+  const n = getRandomNumber(POINT_NUMBER.max, POINT_NUMBER.min);
+  pointWrapper.removeChild(pointItems);
+  renderPoints(n);
 };
 
 const renderFilters = () => {
@@ -18,23 +23,19 @@ const renderFilters = () => {
   FILTERS.forEach((filter) => {
     form.insertAdjacentHTML(`beforeend`, getFilterElement(filter.id, filter.checked));
     const input = form.querySelector(`input:last-of-type`);
-    input.addEventListener(`click`, () => randomizeCards());
+    input.addEventListener(`click`, () => randomizePoints());
   });
   filterWrapper.appendChild(form);
 };
 
-const renderCards = (number) => {
+const renderPoints = (number) => {
   const div = document.createElement(`div`);
   div.className = `trip-day__items`;
   for (let i = 0; i < number; i++) {
-    div.insertAdjacentHTML(`beforeend`, getPointElement());
+    div.insertAdjacentHTML(`beforeend`, points.join(``));
   }
   pointWrapper.appendChild(div);
 };
 
-const getRandomNumber = () => {
-  return Math.floor(Math.random() * (POINT_NUMBER.max - POINT_NUMBER.min)) + POINT_NUMBER.min;
-};
-
 renderFilters();
-renderCards(POINT_NUMBER.default);
+renderPoints(POINT_NUMBER.default);

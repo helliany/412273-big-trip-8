@@ -27,8 +27,7 @@ export const FILTERS = [
 ];
 
 export const POINT_NUMBER = {
-  default: 7,
-  max: 15,
+  max: 5,
   min: 1,
 };
 
@@ -46,23 +45,23 @@ export const pointData = {
     Restaurant: `🍴`,
   },
   events: [{
-    id: `Amsterdam`,
-    title: `Taxi to Airport`,
+    id: `Airport`,
+    title: `Taxi to`,
     icon: `Taxi`,
   },
   {
     id: `Geneva`,
-    title: `Flight to Geneva`,
+    title: `Flight to`,
     icon: `Flight`,
   },
   {
     id: `Chamonix`,
-    title: `Drive to Chamonix`,
+    title: `Drive to`,
     icon: `Drive`,
   },
   {
-    id: `Germany`,
-    title: `Check into a hotel`,
+    id: `hotel`,
+    title: `Check into a`,
     icon: `Checkin`,
   }],
 };

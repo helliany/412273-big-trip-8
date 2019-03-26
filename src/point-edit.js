@@ -1,7 +1,8 @@
-import {createElement} from "./create-element";
+import {Component} from "./component";
 
-export class PointEdit {
+export class PointEdit extends Component {
   constructor(data) {
+    super();
     this._id = data.id;
     this._title = data.title;
     this._titleDest = data.titleDest;
@@ -13,7 +14,6 @@ export class PointEdit {
     this._timeTo = data.timeTo;
     this._price = data.price;
 
-    this._element = null;
     this._onSubmit = null;
     this._onReset = null;
 
@@ -35,9 +35,6 @@ export class PointEdit {
     }
   }
 
-  get element() {
-    return this._element;
-  }
   set onSubmit(fn) {
     this._onSubmit = fn;
   }
@@ -136,15 +133,5 @@ export class PointEdit {
   unbind() {
     this._element.removeEventListener(`submit`, this._onSubmitButtonClick);
     this.element.removeEventListener(`reset`, this._onResetButtonClick);
-  }
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
   }
 }

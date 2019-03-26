@@ -1,8 +1,9 @@
-import {createElement} from "./create-element";
+import {Component} from "./component";
 import * as utils from './utils.js';
 
-export class Point {
+export class Point extends Component {
   constructor(data) {
+    super();
     this._id = data.id;
     this._title = data.title;
     this._icon = data.icon;
@@ -13,7 +14,6 @@ export class Point {
     this._timeTo = data.timeTo;
     this._price = data.price;
 
-    this._element = null;
     this._onClick = null;
     this._onPointClick = this._onPointClick.bind(this);
   }
@@ -24,9 +24,6 @@ export class Point {
     }
   }
 
-  get element() {
-    return this._element;
-  }
   set onClick(fn) {
     this._onClick = fn;
   }
@@ -56,15 +53,5 @@ export class Point {
 
   unbind() {
     this._element.removeEventListener(`click`, this._onPointClick);
-  }
-  render() {
-    this._element = createElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
   }
 }

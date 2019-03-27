@@ -1,7 +1,7 @@
-import {Component} from "./component";
+import Component from "./component";
 import * as utils from './utils.js';
 
-export class Point extends Component {
+export default class Point extends Component {
   constructor(data) {
     super();
     this._id = data.id;

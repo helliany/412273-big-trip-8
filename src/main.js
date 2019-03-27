@@ -1,8 +1,8 @@
 import * as data from './data.js';
 import {getFilterElement} from "./make-filter";
 import {events} from "./get-event";
-import {Point} from './point';
-import {PointEdit} from './point-edit';
+import Point from './point';
+import PointEdit from './point-edit';
 import {getRandomNumber} from "./utils";
 
 const filterWrapper = document.querySelector(`.trip-controls__menus`);
@@ -29,12 +29,12 @@ const renderFilters = () => {
 };
 
 const createPoints = () => {
-  events.forEach((el) => {
-    const point = new Point(el);
-    const editPoint = new PointEdit(el);
+  for (const event of events) {
+    const point = new Point(event);
+    const editPoint = new PointEdit(event);
     points.push(point);
     editPoints.push(editPoint);
-  });
+  }
   renderPoints(points);
 };
 

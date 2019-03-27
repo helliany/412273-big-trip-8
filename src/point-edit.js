@@ -1,6 +1,6 @@
-import {Component} from "./component";
+import Component from "./component";
 
-export class PointEdit extends Component {
+export default class PointEdit extends Component {
   constructor(data) {
     super();
     this._id = data.id;

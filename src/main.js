@@ -1,20 +1,18 @@
 import * as data from './data.js';
 import {getFilterElement} from "./make-filter";
-import {events} from "./get-event";
 import Point from './point';
 import PointEdit from './point-edit';
-import {getRandomNumber} from "./utils";
 
 const filterWrapper = document.querySelector(`.trip-controls__menus`);
 const pointWrapper = document.querySelector(`.trip-day__items`);
 
-const points = [];
-const editPoints = [];
+const pointData = data.getEvent();
+const PointComponent = new Point(pointData);
+const PointEditComponent = new PointEdit(pointData);
 
 const randomizePoints = () => {
-  const n = getRandomNumber(data.POINT_NUMBER.max, data.POINT_NUMBER.min);
   pointWrapper.innerHTML = ``;
-  renderPoints(points.slice(0, n));
+  renderPoints.render();
 };
 
 const renderFilters = () => {
@@ -28,40 +26,46 @@ const renderFilters = () => {
   filterWrapper.appendChild(form);
 };
 
-const createPoints = () => {
-  for (const event of events) {
-    const point = new Point(event);
-    const editPoint = new PointEdit(event);
-    points.push(point);
-    editPoints.push(editPoint);
-  }
-  renderPoints(points);
-};
+const renderPoints = {
+  bind() {
+    PointComponent.onClick = () => {
+      PointEditComponent.render();
+      pointWrapper.replaceChild(PointEditComponent.element, PointComponent.element);
+      PointComponent.unrender();
+    };
 
-const renderPoints = (arr) => {
-  const pointsArr = [];
-  for (let [i, el] of arr.entries()) {
-    if (arr.indexOf(el) < arr.length) {
-      pointsArr.push(el.render());
-      el.onClick = () => {
-        editPoints[i].render();
-        pointWrapper.replaceChild(editPoints[i].element, el.element);
-        el.unrender();
-      };
-      editPoints[i].onSubmit = () => {
-        el.render();
-        pointWrapper.replaceChild(el.element, editPoints[i].element);
-        editPoints[i].unrender();
-      };
-      editPoints[i].onReset = () => {
-        el.render();
-        pointWrapper.replaceChild(el.element, editPoints[i].element);
-        editPoints[i].unrender();
-      };
-    }
+    PointEditComponent.onSubmit = (newObject) => {
+      PointEditComponent.destination = newObject.destination;
+      PointEditComponent.title = newObject.title;
+      PointEditComponent.price = newObject.price;
+      PointEditComponent.timeFrom = newObject.timeFrom;
+      PointEditComponent.timeTo = newObject.timeTo;
+      PointEditComponent.day = newObject.day;
+      PointEditComponent.offers = newObject.offers;
+      PointEditComponent.icon = newObject.icon;
+      PointComponent.update(PointEditComponent);
+      PointComponent.render();
+      pointWrapper.replaceChild(PointComponent.element, PointEditComponent.element);
+      PointEditComponent.unrender();
+    };
+
+    PointEditComponent.onReset = () => {
+      PointComponent.render();
+      pointWrapper.replaceChild(PointComponent.element, PointEditComponent.element);
+      PointEditComponent.unrender();
+    };
+  },
+  render() {
+    // filters.map((filter, i) => filtersParent.insertAdjacentHTML(`beforeend`,
+    //     renderFilter(filter, i === Filter.INDEX_CHECKED)));
+
+    pointWrapper.appendChild(PointComponent.render());
+  },
+  init() {
+    this.render();
+    this.bind();
   }
-  pointWrapper.prepend(...pointsArr);
 };
 
 renderFilters();
-createPoints();
+renderPoints.init();

@@ -4,10 +4,6 @@ export const getRandomNumber = (max, min) => {
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-export const getIcon = (icons, name) => {
-  return icons[name];
-};
-
 export const getRandomValue = (data, max, min, split = `,`) => {
   const arr = data.split(split);
   const n = getRandomNumber(max, min);
@@ -18,3 +14,5 @@ export const getRandomValue = (data, max, min, split = `,`) => {
 export const getDuration = (timeFrom, timeTo) => {
   return moment.utc(moment.duration(timeTo) - moment.duration(timeFrom)).format(`h[h] m[m]`);
 };
+
+export const getArrRand = (arr) => arr[getRandomNumber(0, arr.length)];

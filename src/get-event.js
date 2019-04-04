@@ -2,12 +2,13 @@ import * as data from './data.js';
 import * as utils from './utils.js';
 
 const getEvent = (event) => ({
-  id: event.id,
-  title: event.title + ` ` + event.id,
-  titleDest: event.title,
-  icon: utils.getIcon(data.pointData.icons, event.icon),
+  destination: event.destination,
+  destinations: data.pointData.destinations,
+  title: event.title,
+  icon: data.pointData.icons.find(() => event.icon).icon,
+  icons: data.pointData.icons,
   offers: utils.getRandomValue(data.OFFERS.offers, data.OFFERS.max, data.OFFERS.min),
-  desc: utils.getRandomValue(data.DESCRIPTION.desc, data.DESCRIPTION.max, data.DESCRIPTION.min, `.`),
+  description: utils.getRandomValue(data.DESCRIPTION.description, data.DESCRIPTION.max, data.DESCRIPTION.min, `.`),
   picture: `http://picsum.photos/300/150?r=${Math.random()}`,
   timeFrom: utils.getRandomValue(data.TIME.time, data.TIME.max, data.TIME.max),
   timeTo: utils.getRandomValue(data.TIME.time, data.TIME.max, data.TIME.max),

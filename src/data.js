@@ -1,13 +1,33 @@
 import * as utils from './utils.js';
 
-
 export const FILTERS = [
-  {id: `Everything`, checked: true},
-  {id: `Future`},
-  {id: `Past`},
+  `Everything`,
+  `Future`,
+  `Past`,
 ];
 
-export const getEvent = () => {
+export const transport = [
+  {name: `taxi`, icon: `🚕`},
+  {name: `bus`, icon: `🚌`},
+  {name: `train`, icon: `🚂`},
+  {name: `ship`, icon: `🛳`},
+  {name: `transport`, icon: `🚊`},
+  {name: `drive`, icon: `🚗`},
+  {name: `flight`, icon: `✈️`},
+];
+
+const services = [
+  {name: `check-in`, icon: `🏨`},
+  {name: `sightseeing`, icon: `🏛️`},
+  {name: `restaurant`, icon: `🍴`},
+];
+
+export const icons = [
+  ...transport,
+  ...services
+];
+
+export const getData = () => {
 
   const TIME = {
     time: `9:00, 10:00, 11:00, 12:00, 13:00, 14:00, 15:00, 16:00, 17:00, 18:00, 19:00, 20:00, 21:00, 22:00, 23:00, 00:00`,
@@ -32,55 +52,28 @@ export const getEvent = () => {
   };
 
   const pointData = {
-    icons: [
-      {name: `Taxi`, icon: `🚕`},
-      {name: `Bus`, icon: `🚌`},
-      {name: `Train`, icon: `🚂`},
-      {name: `Ship`, icon: `🛳`},
-      {name: `Transport`, icon: `🚊`},
-      {name: `Drive`, icon: `🚗`},
-      {name: `Flight`, icon: `✈️`},
-      {name: `Check-in`, icon: `🏨`},
-      {name: `Sightseeing`, icon: `🏛️`},
-      {name: `Restaurant`, icon: `🍴`},
-    ],
     destinations: [
       `Airport`,
       `Geneva`,
       `Chamonix`,
       `hotel`,
     ],
-    events: [{
-      destination: `Airport`,
-      icon: `Taxi`,
-    },
-    {
-      destination: `Geneva`,
-      icon: `Flight`,
-    },
-    {
-      destination: `Chamonix`,
-      icon: `Drive`,
-    },
-    {
-      destination: `hotel`,
-      icon: `Checkin`,
-    }],
   };
 
-  const title = utils.getArrRand([...(pointData.icons.map((icon) => icon.name))]);
+  const title = utils.getRandomArray([...(icons.map((icon) => icon.name))]);
 
   return {
-    destination: utils.getArrRand(pointData.destinations),
+    destination: utils.getRandomArray(pointData.destinations),
     destinations: pointData.destinations,
     title,
-    icon: pointData.icons.find((item) => item.name === title).icon,
-    icons: pointData.icons,
+    icon: utils.getIcon(icons, title),
+    icons,
     offers: utils.getRandomValue(OFFERS.offers, OFFERS.max, OFFERS.min),
     description: utils.getRandomValue(DESCRIPTION.description, DESCRIPTION.max, DESCRIPTION.min, `.`),
     picture: `http://picsum.photos/300/150?r=${Math.random()}`,
     timeFrom: utils.getRandomValue(TIME.time, TIME.max, TIME.max),
     timeTo: utils.getRandomValue(TIME.time, TIME.max, TIME.max),
+    dueDate: ``,
     price: `${utils.getRandomValue(PRICE.price, PRICE.max, PRICE.max)}`,
   };
 };

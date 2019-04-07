@@ -15,4 +15,6 @@ export const getDuration = (timeFrom, timeTo) => {
   return moment.utc(moment.duration(timeTo) - moment.duration(timeFrom)).format(`h[h] m[m]`);
 };
 
-export const getArrRand = (arr) => arr[getRandomNumber(0, arr.length)];
+export const getRandomArray = (arr) => arr[getRandomNumber(0, arr.length)];
+
+export const getIcon = (icons, title) => icons.find((item) => item.name === title).icon;

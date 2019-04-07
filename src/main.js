@@ -1,36 +1,81 @@
 import * as data from './data.js';
-import {getFilterElement} from "./make-filter";
+import {getRandomNumber, getIcon} from './utils.js';
 import Point from './point';
 import PointEdit from './point-edit';
+import Filter from './filter';
+import {renderCharts} from './render-charts';
 
-const filterWrapper = document.querySelector(`.trip-controls__menus`);
+const filterWrapper = document.querySelector(`.trip-filter`);
 const pointWrapper = document.querySelector(`.trip-day__items`);
+const main = document.querySelector(`main`);
+const statistic = document.querySelector(`.statistic`);
+const switchBtns = document.querySelectorAll(`.trip-controls__menus .view-switch__item`);
 
-const pointData = data.getEvent();
-const PointComponent = new Point(pointData);
-const PointEditComponent = new PointEdit(pointData);
+const pointsArr = new Array(getRandomNumber(10, 1)).fill(``).map(() => data.getData());
 
-const randomizePoints = () => {
-  pointWrapper.innerHTML = ``;
-  renderPoints.render();
+const onSwitchBtnsClick = (evt) => {
+  evt.preventDefault();
+  for (const switchBtn of switchBtns) {
+    switchBtn.classList.remove(`view-switch__item--active`);
+  }
+  if (evt.target.getAttribute(`href`) === `#stats`) {
+    main.classList.add(`visually-hidden`);
+    statistic.classList.remove(`visually-hidden`);
+    evt.target.classList.add(`view-switch__item--active`);
+    renderCharts(pointsArr);
+  } else {
+    main.classList.remove(`visually-hidden`);
+    statistic.classList.add(`visually-hidden`);
+    evt.target.classList.add(`view-switch__item--active`);
+  }
+};
+
+const filterPoints = (points, filterName) => {
+  switch (filterName) {
+    case `filter-everything`:
+      return points;
+
+    case `filter-future`:
+      return points.filter((it) => it.dueDate > Date.now());
+
+    case `filter-past`:
+      return points.filter((it) => it.dueDate < Date.now());
+
+    default:
+      return points;
+  }
 };
 
 const renderFilters = () => {
-  const form = document.createElement(`form`);
-  form.className = `trip-filter`;
   data.FILTERS.forEach((filter) => {
-    form.insertAdjacentHTML(`beforeend`, getFilterElement(filter.id, filter.checked));
-    const input = form.querySelector(`input:last-of-type`);
-    input.addEventListener(`click`, () => randomizePoints());
+    const FilterComponent = new Filter(filter);
+    filterWrapper.appendChild(FilterComponent.render());
+    // const input = filterWrapper.querySelector(`input:last-of-type`);
+    // input.addEventListener(`click`, () => renderPoints(filteredPoints, pointWrapper));
   });
-  filterWrapper.appendChild(form);
 };
 
-const renderPoints = {
-  bind() {
+const onFilterChange = (evt) => {
+  const filterName = evt.target.id;
+  const filteredPoints = filterPoints(pointsArr, filterName);
+  renderPoints(filteredPoints, pointWrapper);
+};
+
+const deletePoint = (points, i) => {
+  points.splice(i, 1);
+  return points;
+};
+
+const renderPoints = (points, container) => {
+  container.textContent = ``;
+
+  points.forEach((point, i) => {
+    const PointComponent = new Point(point);
+    const PointEditComponent = new PointEdit(point);
+
     PointComponent.onClick = () => {
       PointEditComponent.render();
-      pointWrapper.replaceChild(PointEditComponent.element, PointComponent.element);
+      container.replaceChild(PointEditComponent.element, PointComponent.element);
       PointComponent.unrender();
     };
 
@@ -40,32 +85,45 @@ const renderPoints = {
       PointEditComponent.price = newObject.price;
       PointEditComponent.timeFrom = newObject.timeFrom;
       PointEditComponent.timeTo = newObject.timeTo;
-      PointEditComponent.day = newObject.day;
+      PointEditComponent.dueDate = newObject.dueDate;
       PointEditComponent.offers = newObject.offers;
       PointEditComponent.icon = newObject.icon;
       PointComponent.update(PointEditComponent);
       PointComponent.render();
-      pointWrapper.replaceChild(PointComponent.element, PointEditComponent.element);
+      container.replaceChild(PointComponent.element, PointEditComponent.element);
       PointEditComponent.unrender();
     };
 
-    PointEditComponent.onReset = () => {
-      PointComponent.render();
-      pointWrapper.replaceChild(PointComponent.element, PointEditComponent.element);
+    PointEditComponent.onDelete = () => {
+      deletePoint(points, i);
       PointEditComponent.unrender();
     };
-  },
-  render() {
-    // filters.map((filter, i) => filtersParent.insertAdjacentHTML(`beforeend`,
-    //     renderFilter(filter, i === Filter.INDEX_CHECKED)));
 
-    pointWrapper.appendChild(PointComponent.render());
-  },
-  init() {
-    this.render();
-    this.bind();
+    PointEditComponent.onSelect = () => {
+      let label = PointEditComponent.element.querySelector(`.travel-way__label`);
+      let toggleInput = PointEditComponent.element.querySelector(`#travel-way__toggle`);
+      let iconInput = PointEditComponent.element.querySelector(`#travel-way__icon`);
+
+      const title = PointEditComponent.element.querySelector(`.travel-way__select-input:checked`).value;
+      const icon = getIcon(data.icons, title);
+
+      toggleInput.value = title;
+      iconInput.value = icon;
+
+      label.textContent = icon;
+      toggleInput.checked = false;
+
+      const selectedData = Object.assign(points, {title, icon});
+
+      PointEditComponent.update(selectedData);
+    };
+    container.appendChild(PointComponent.render());
+  });
+  filterWrapper.addEventListener(`change`, onFilterChange);
+  for (const switchBtn of switchBtns) {
+    switchBtn.addEventListener(`click`, onSwitchBtnsClick);
   }
 };
 
 renderFilters();
-renderPoints.init();
+renderPoints(pointsArr, pointWrapper);

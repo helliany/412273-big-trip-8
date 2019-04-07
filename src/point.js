@@ -11,6 +11,7 @@ export default class Point extends Component {
     this._timeFrom = data.timeFrom;
     this._timeTo = data.timeTo;
     this._price = data.price;
+    this._dueDate = data.dueDate;
 
     this._onClick = null;
     this._onPointClick = this._onPointClick.bind(this);
@@ -64,6 +65,7 @@ export default class Point extends Component {
     this._timeFrom = data.timeFrom;
     this._timeTo = data.timeTo;
     this._price = data.price;
+    this._dueDate = data.dueDate;
     this._offers = data.offers;
   }
 }

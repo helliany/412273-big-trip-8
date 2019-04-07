@@ -14,20 +14,21 @@ export default class PointEdit extends Component {
     this._picture = data.picture;
     this._timeFrom = data.timeFrom;
     this._timeTo = data.timeTo;
-    this._day = data.day;
+    this._dueDate = data.dueDate;
     this._price = data.price;
 
     this._onSubmit = null;
-    this._onReset = null;
+    this._onDelete = null;
+    this._onSelect = null;
     this._dateFlatpickr = null;
     this._timeFromFlatpickr = null;
     this._timeToFlatpickr = null;
     this._state.isFavorite = false;
 
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
-    this._onResetButtonClick = this._onResetButtonClick.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
     this._onChangeFavorite = this._onChangeFavorite.bind(this);
-    this._onEscPress = this._onEscPress.bind(this);
+    // this._onEscPress = this._onEscPress.bind(this);
     this._onInputSelect = this._onInputSelect.bind(this);
   }
 
@@ -41,7 +42,7 @@ export default class PointEdit extends Component {
       icon: ``,
       timeFrom: ``,
       timeTo: ``,
-      day: new Date(),
+      dueDate: new Date(),
     };
 
     const pointEditMapper = PointEdit.createMapper(entry);
@@ -70,10 +71,10 @@ export default class PointEdit extends Component {
     this.update(newData);
   }
 
-  _onResetButtonClick(evt) {
+  _onDeleteButtonClick(evt) {
     evt.preventDefault();
-    if (typeof this._onReset === `function`) {
-      this._onReset();
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
     }
   }
 
@@ -81,17 +82,22 @@ export default class PointEdit extends Component {
     this._state.isFavorite = !this._state.isFavorite;
   }
 
-  _onInputSelect(evt) {
-    const label = this._element.querySelector(`.point__destination-label`);
-    label.innerHTML = evt.target.value;
+  _onInputSelect() {
+    if (typeof this._onSelect === `function`) {
+      this._onSelect();
+    }
   }
 
   set onSubmit(fn) {
     this._onSubmit = fn;
   }
 
-  set onReset(fn) {
-    this._onReset = fn;
+  set onDelete(fn) {
+    this._onDelete = fn;
+  }
+
+  set onSelect(fn) {
+    this._onSelect = fn;
   }
 
   set onEsc(fn) {
@@ -104,11 +110,12 @@ export default class PointEdit extends Component {
         <header class="point__header">
           <label class="point__date">
             choose day
-            <input class="point__input" type="text" placeholder="MAR 18" name="day" value="${this._day}">
+            <input class="point__input" type="text" placeholder="MAR 18" name="day" value="${this._dueDate}">
           </label>
           <div class="travel-way">
             <label class="travel-way__label" for="travel-way__toggle">${this._icon}</label>
             <input type="checkbox" class="travel-way__toggle visually-hidden" id="travel-way__toggle">
+            <input type="text" class="travel-way__toggle visually-hidden" name="icon" id="travel-way__icon" value="${this._icon}">
             <div class="travel-way__select">
               <div class="travel-way__select-group">
                 ${this._icons.map(({name, icon}) => `
@@ -175,23 +182,25 @@ export default class PointEdit extends Component {
 
   bind() {
     this._element.addEventListener(`submit`, this._onSubmitButtonClick);
-    this.element.addEventListener(`reset`, this._onResetButtonClick);
+    this.element.addEventListener(`reset`, this._onDeleteButtonClick);
     document.addEventListener(`keydown`, this._onKeyPress);
     this._element.querySelector(`#favorite`)
       .addEventListener(`change`, this._onChangeFavorite);
     this._element.querySelector(`.travel-way__select-group`)
-      .addEventListener(`change`, (e) => this._onInputSelect(e));
-    this._dateFlatpickr = flatpickr(this._element.querySelector(`.point__date .point__input`), {altInput: true, altFormat: `j M y`, dateFormat: `j M y`});
+      .addEventListener(`change`, this._onInputSelect);
+    this._dateFlatpickr = flatpickr(this._element.querySelector(`.point__date .point__input`), {altInput: true, mode: `range`, altFormat: `j M y`, dateFormat: `j M y`});
     this._timeFromFlatpickr = flatpickr(this._element.querySelector(`#timefrom`), {enableTime: true, noCalendar: true, altInput: true, altFormat: `h:i`, dateFormat: `h:i`});
     this._timeToFlatpickr = flatpickr(this._element.querySelector(`#timeto`), {enableTime: true, noCalendar: true, altInput: true, altFormat: `h:i`, dateFormat: `h:i`});
   }
 
   unbind() {
     this._element.removeEventListener(`submit`, this._onSubmitButtonClick);
-    this.element.removeEventListener(`reset`, this._onResetButtonClick);
+    this.element.removeEventListener(`reset`, this._onDeleteButtonClick);
     document.removeEventListener(`keydown`, this._onKeyPress);
     this._element.querySelector(`#favorite`)
       .removeEventListener(`change`, this._onChangeFavorite);
+    this._element.querySelector(`.travel-way__select-group`)
+      .removeEventListener(`change`, this._onInputSelect);
   }
 
   update(data) {
@@ -199,8 +208,9 @@ export default class PointEdit extends Component {
     this._title = data.title;
     this._timeFrom = data.timeFrom;
     this._timeTo = data.timeTo;
-    this._day = data.day;
+    this._dueDate = data.dueDate;
     this._price = data.price;
+    this._icon = data.icon;
   }
 
   static createMapper(target) {
@@ -208,7 +218,7 @@ export default class PointEdit extends Component {
       destination: (value) => (target.destination = value),
       timeFrom: (value) => (target.timeFrom = value),
       timeTo: (value) => (target.timeTo = value),
-      day: (value) => (target.day = value),
+      day: (value) => (target.dueDate = value),
       icon: (value) => (target.icon = value),
       price: (value) => (target.price = value),
     };

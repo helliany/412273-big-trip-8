@@ -29,8 +29,6 @@ export default (filters, points) => {
     for (const el of [...FilterComponent.element.children]) {
       filterWrapper.appendChild(el);
     }
-    // const input = filterWrapper.querySelector(`input:last-of-type`);
-    // input.addEventListener(`click`, () => renderPoints(filteredPoints, pointWrapper));
   });
 };
 

@@ -1,33 +1,24 @@
-import * as utils from './utils.js';
+import * as utils from '../utils.js';
 
-export const FILTERS = [
-  `Everything`,
-  `Future`,
-  `Past`,
-];
-
-export const transport = [
-  {name: `taxi`, icon: `🚕`},
-  {name: `bus`, icon: `🚌`},
-  {name: `train`, icon: `🚂`},
-  {name: `ship`, icon: `🛳`},
-  {name: `transport`, icon: `🚊`},
-  {name: `drive`, icon: `🚗`},
-  {name: `flight`, icon: `✈️`},
-];
-
-const services = [
-  {name: `check-in`, icon: `🏨`},
-  {name: `sightseeing`, icon: `🏛️`},
-  {name: `restaurant`, icon: `🍴`},
-];
-
-export const icons = [
-  ...transport,
-  ...services
-];
-
-export const getData = () => {
+export const getMockData = () => {
+  const transport = [
+    {name: `taxi`, icon: `🚕`},
+    {name: `bus`, icon: `🚌`},
+    {name: `train`, icon: `🚂`},
+    {name: `ship`, icon: `🛳`},
+    {name: `transport`, icon: `🚊`},
+    {name: `drive`, icon: `🚗`},
+    {name: `flight`, icon: `✈️`},
+  ];
+  const services = [
+    {name: `check-in`, icon: `🏨`},
+    {name: `sightseeing`, icon: `🏛️`},
+    {name: `restaurant`, icon: `🍴`},
+  ];
+  const icons = [
+    ...transport,
+    ...services
+  ];
 
   const TIME = {
     time: `9:00, 10:00, 11:00, 12:00, 13:00, 14:00, 15:00, 16:00, 17:00, 18:00, 19:00, 20:00, 21:00, 22:00, 23:00, 00:00`,
@@ -50,30 +41,27 @@ export const getData = () => {
     min: 1,
     max: 4,
   };
-
-  const pointData = {
-    destinations: [
-      `Airport`,
-      `Geneva`,
-      `Chamonix`,
-      `hotel`,
-    ],
-  };
+  const destinations = [
+    `Airport`,
+    `Geneva`,
+    `Chamonix`,
+    `hotel`,
+  ];
 
   const title = utils.getRandomArray([...(icons.map((icon) => icon.name))]);
 
   return {
-    destination: utils.getRandomArray(pointData.destinations),
-    destinations: pointData.destinations,
+    destination: utils.getRandomArray(destinations),
+    destinations,
     title,
     icon: utils.getIcon(icons, title),
     icons,
     offers: utils.getRandomValue(OFFERS.offers, OFFERS.max, OFFERS.min),
     description: utils.getRandomValue(DESCRIPTION.description, DESCRIPTION.max, DESCRIPTION.min, `.`),
-    picture: `http://picsum.photos/300/150?r=${Math.random()}`,
-    timeFrom: utils.getRandomValue(TIME.time, TIME.max, TIME.max),
-    timeTo: utils.getRandomValue(TIME.time, TIME.max, TIME.max),
-    dueDate: ``,
+    pictures: `http://picsum.photos/300/150?r=${Math.random()}`,
+    dateFrom: utils.getRandomValue(TIME.time, TIME.max, TIME.max),
+    dateTo: utils.getRandomValue(TIME.time, TIME.max, TIME.max),
+    dueDate: `2019-04-09`,
     price: `${utils.getRandomValue(PRICE.price, PRICE.max, PRICE.max)}`,
   };
 };

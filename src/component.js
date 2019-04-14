@@ -1,4 +1,4 @@
-import {createElement} from "./create-element";
+import {createElement} from "./utils";
 
 export default class Component {
   constructor() {
@@ -40,4 +40,10 @@ export default class Component {
   }
 
   update() {}
+
+  rerender() {
+    this.unbind();
+    const newElement = this._element;
+    this.element.parentNode.replaceChild(this.render(), newElement);
+  }
 }

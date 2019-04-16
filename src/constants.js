@@ -22,6 +22,12 @@ const FILTERS = [
   `Past`,
 ];
 
+const SORTS = [
+  `event`,
+  `time`,
+  `price`,
+];
+
 const ICONS = {
   'taxi': `🚕`,
   'bus': `🚌`,
@@ -56,4 +62,4 @@ const ICONS_ARRAY = [
   ...SERVICES
 ];
 
-export {METHOD, MESSAGE, SERVER, FILTERS, ICONS, TRANSPORT, ICONS_ARRAY};
+export {METHOD, MESSAGE, SERVER, FILTERS, SORTS, ICONS, TRANSPORT, ICONS_ARRAY};

@@ -81,7 +81,7 @@ export default (points, destinations, offers, provider) => {
     PointEditComponent.onEsc = () => {
       PointComponent.render();
       pointWrapper.replaceChild(PointComponent.element, PointEditComponent.element);
-      PointEditComponent.unrender();
+      PointEditComponent.unbind();
     };
 
     PointEditComponent.onSelect = () => {

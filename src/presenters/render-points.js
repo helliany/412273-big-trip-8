@@ -1,21 +1,18 @@
 import Point from '../views/point';
 import PointEdit from '../views/point-edit';
 import {getIcon, getNewData} from '../utils.js';
-import Api from '../api';
 import ModelPoint from '../model/model-point';
-import RawModelPoint from '../model/raw-model-point';
 import renderPoints from '../presenters/render-points';
 import {ICONS_ARRAY} from '../constants';
 
 const pointWrapper = document.querySelector(`.trip-day__items`);
-
 
 const deletePoint = (points, i) => {
   points.splice(i, 1);
   return points;
 };
 
-export default (points, destinations, offers, api) => {
+export default (points, destinations, offers, provider) => {
   pointWrapper.textContent = ``;
   const fragment = document.createDocumentFragment();
 
@@ -42,11 +39,16 @@ export default (points, destinations, offers, api) => {
       PointEditComponent.element.querySelector(`[type=submit]`).innerText = `Saving...`;
       disableForm(true);
 
-      const newData = getNewData(points, i, data);
+      point.title = data.title;
+      point.destination = data.destination;
+      point.dateFrom = data.dateFrom;
+      point.dateTo = data.dateTo;
+      point.price = data.price;
+      point.offers = data.offers;
 
-      api.updatePoint({id: point.id, data: new RawModelPoint(newData)})
+      provider.updatePoint({id: point.id, data: point.toRAW()})
         .then((updatedData) => {
-          PointComponent.update(new ModelPoint(updatedData));
+          PointComponent.update(ModelPoint.parsePoint(updatedData));
           PointComponent.render();
           pointWrapper.replaceChild(PointComponent.element, PointEditComponent.element);
           PointEditComponent.unrender();
@@ -62,12 +64,12 @@ export default (points, destinations, offers, api) => {
       PointEditComponent.element.querySelector(`[type=reset]`).innerText = `Deleting...`;
       disableForm(true);
 
-      api.deletePoint({id: point.id})
+      provider.deletePoint({id: point.id})
         .then(() => {
           deletePoint(points, i);
           PointEditComponent.unrender();
         })
-        .then(() => Api.getPoints())
+        .then(() => provider.getPoints())
         .then(renderPoints)
         .catch(() => {
           PointEditComponent.element.querySelector(`[type=reset]`).innerText = `Delete`;

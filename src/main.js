@@ -1,11 +1,12 @@
 import renderPoints from './presenters/render-points';
 import renderCharts from './presenters/render-charts';
 import renderFilters from './presenters/render-filters';
+import renderSort from './presenters/render-sort';
 import Message from './views/message';
 import Api from './api';
 import Provider from './provider';
 import Store from './store';
-import {MESSAGE, SERVER, FILTERS} from './constants';
+import {MESSAGE, SERVER, FILTERS, SORTS} from './constants';
 
 import uuid from 'uuid/v4';
 
@@ -67,6 +68,7 @@ const init = () => {
     ]) => {
       if (points.length && destinations.length && offers.length) {
         renderFilters(FILTERS, points);
+        renderSort(SORTS, points);
         renderPoints(points, destinations, offers, provider);
 
         for (const switchBtn of switchBtns) {

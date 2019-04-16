@@ -18,7 +18,8 @@ const filterPoints = (points, filterName) => {
 };
 
 export default (filters, points) => {
-  filters.forEach((filter) => {
+  const fragment = document.createDocumentFragment();
+  for (const filter of filters) {
     const FilterComponent = new Filter(filter);
     FilterComponent.render();
     FilterComponent.onFilter = (evt) => {
@@ -27,7 +28,8 @@ export default (filters, points) => {
       renderPoints(filteredPoints);
     };
     for (const el of [...FilterComponent.element.children]) {
-      filterWrapper.appendChild(el);
+      fragment.appendChild(el);
     }
-  });
+  }
+  filterWrapper.appendChild(fragment);
 };

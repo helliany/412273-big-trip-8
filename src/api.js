@@ -63,6 +63,16 @@ export default class Api {
     });
   }
 
+  syncPoints({points}) {
+    return this._load({
+      url: `points/sync`,
+      method: METHOD.post,
+      body: JSON.stringify(points),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then(toJSON);
+  }
+
   _load({url, method = METHOD.get, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 

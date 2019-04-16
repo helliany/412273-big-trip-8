@@ -13,6 +13,7 @@ const MESSAGE = {
 const SERVER = {
   authorization: `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`,
   endPoint: `https://es8-demo-srv.appspot.com/big-trip`,
+  key: `points-store-key`,
 };
 
 const FILTERS = [

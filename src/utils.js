@@ -11,21 +11,24 @@ const getRandomValue = (data, max, min, split = `,`) => {
   return [...new Array(n)].map(() => arr[getIndex()].trim());
 };
 
-const getDuration = (dateFrom, dateTo) => {
+const getTime = ({dateFrom, dateTo}) => {
   const from = moment(dateFrom);
   const to = moment(dateTo);
-  const diffTime = moment.duration(to.diff(from));
-  return moment(+diffTime).format(`HH:mm`);
-};
+  const difference = moment.duration(to.diff(from));
+  const durationHs = parseInt(difference.asHours(), 10);
+  const hours = difference.hours() >= 10 ? `${difference.hours()}h` : `0${difference.hours()}h`;
+  const minutes = difference.minutes() >= 10 ? `${difference.minutes()}m` : `0${difference.minutes()}m`;
+  const days = difference.days() > 10 ? `${difference.days()}d` : `0${difference.days()}d`;
+  const months = difference.months() > 10 ? `${difference.months()}m` : `0${difference.months()}m`;
+  const duration = `${parseInt(months, 10) > 0 ? months : ``} ${parseInt(days, 10) > 0 ? days : ``} ${parseInt(hours, 10) > 0 ? hours : ``} ${parseInt(minutes, 10) > 0 ? minutes : ``}`;
 
-const getDurationHours = (dateFrom, dateTo) => {
-  const from = moment(dateFrom);
-  const to = moment(dateTo);
-  const diffTime = moment.duration(to.diff(from));
-  return moment(+diffTime).format(`h`);
+  return {
+    from: from.format(`HH:mm`),
+    to: to.format(`HH:mm`),
+    duration,
+    durationHs,
+  };
 };
-
-const getRandomArray = (arr) => arr[getRandomNumber(0, arr.length)];
 
 const getIcon = (icons, title) => icons.find((item) => item.name === title).icon;
 
@@ -43,9 +46,7 @@ const createElement = (template) => {
 export {
   getRandomNumber,
   getRandomValue,
-  getDuration,
-  getDurationHours,
-  getRandomArray,
+  getTime,
   getIcon,
   getNewData,
   createElement,

@@ -13,21 +13,21 @@ export default class Provider {
   }
 
   _objectToArray(object) {
-    return Object.keys(object).map((id) => object[id]);
+    return object && Object.keys(object).map((id) => object[id]);
   }
 
   updatePoint({id, data}) {
     if (this._isOnline()) {
       return this._api.updatePoint({id, data})
-      .then((point) => {
-        this._store.setItem({key: point.id, item: point});
-        return point;
-      });
+        .then((point) => {
+          this._store.setItem({key: `points`, item: point.toRAW()});
+          return point;
+        });
     } else {
       const point = data;
       this._needSync = true;
-      this._store.setItem({key: point.id, item: point});
-      return Promise.resolve(point);
+      this._store.updateItem({key: `points`, id, data: point});
+      return Promise.resolve(ModelPoint.parsePoint(point));
     }
   }
 
@@ -35,8 +35,8 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.createPoint({point})
         .then((it) => {
-          this._store.setItem({key: it.id, item: it.toRAW()});
-          return point;
+          this._store.setItem({key: `points`, item: it.toRAW()});
+          return it;
         });
     } else {
       point.id = this._generateId();
@@ -50,11 +50,11 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.deletePoint({id})
         .then(() => {
-          this._store.removeItem({key: id});
+          this._store.removeItem({key: `points`, id});
         });
     } else {
       this._needSync = true;
-      this._store.removeItem({key: id});
+      this._store.removeItem({key: `points`, id});
       return Promise.resolve(true);
     }
   }
@@ -63,11 +63,11 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.getPoints()
         .then((points) => {
-          points.map((it) => this._store.setItem({key: it.id, item: it.toRAW()}));
+          this._store.setItem({key: `points`, item: points.map((it) => it.toRAW())});
           return points;
         });
     } else {
-      const rawPointsMap = this._store.getAll();
+      const rawPointsMap = this._store.getItem({key: `points`});
       const rawPoints = this._objectToArray(rawPointsMap);
       const points = ModelPoint.parsePoints(rawPoints);
       return Promise.resolve(points);
@@ -78,14 +78,13 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.getDestinations()
         .then((destinations) => {
-          destinations.map((it) => this._store.setItem({key: it.name, item: it}));
+          this._store.setItem({key: `destinations`, item: destinations});
           return destinations;
         });
     } else {
-      const rawDestinationsMap = this._store.getAll();
+      const rawDestinationsMap = this._store.getItem({key: `destinations`});
       const rawDestinations = this._objectToArray(rawDestinationsMap);
-      const destinations = ModelPoint.parsePoints(rawDestinations);
-      return Promise.resolve(destinations);
+      return Promise.resolve(rawDestinations);
     }
   }
 
@@ -93,18 +92,17 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.getOffers()
         .then((offers) => {
-          offers.map((it) => this._store.setItem({key: it.type, item: it}));
+          this._store.setItem({key: `offers`, item: offers});
           return offers;
         });
     } else {
-      const rawOffersMap = this._store.getAll();
+      const rawOffersMap = this._store.getItem({key: `offers`});
       const rawOffers = this._objectToArray(rawOffersMap);
-      const offers = ModelPoint.parsePoints(rawOffers);
-      return Promise.resolve(offers);
+      return Promise.resolve(rawOffers);
     }
   }
 
   syncPoints() {
-    return this._api.syncPoints({points: this._objectToArray(this._store.getAll())});
+    return this._api.syncPoints({points: this._objectToArray(this._store.getItem({key: `points`}))});
   }
 }

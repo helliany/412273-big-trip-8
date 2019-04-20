@@ -1,5 +1,5 @@
 import ModelPoint from './model/model-point';
-import {METHOD} from './constants';
+import {Method} from './constants';
 
 const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
@@ -38,49 +38,48 @@ export default class Api {
   createPoint({point}) {
     return this._load({
       url: `points`,
-      method: METHOD.post,
+      method: Method.POST,
       body: JSON.stringify(point),
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then(toJSON)
-      .then(ModelPoint.parsePoints);
+      .then(ModelPoint.parsePoint);
   }
 
   updatePoint({id, data}) {
     return this._load({
       url: `points/${id}`,
-      method: METHOD.put,
+      method: Method.PUT,
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(toJSON);
+      .then(toJSON)
+      .then(ModelPoint.parsePoint);
   }
 
   deletePoint({id}) {
     return this._load({
       url: `points/${id}`,
-      method: METHOD.delete
+      method: Method.DELETE
     });
   }
 
   syncPoints({points}) {
     return this._load({
       url: `points/sync`,
-      method: METHOD.post,
+      method: Method.POST,
       body: JSON.stringify(points),
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then(toJSON);
   }
 
-  _load({url, method = METHOD.get, body = null, headers = new Headers()}) {
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
-        // eslint-disable-next-line no-console
-        console.error(`fetch error: ${err}`);
         throw err;
       });
   }

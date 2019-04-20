@@ -1,17 +1,16 @@
 import Component from "../component";
-import * as utils from '../utils.js';
 import {ICONS} from '../constants';
-import moment from 'moment';
+import {getTime} from '../utils';
 
 export default class Point extends Component {
   constructor(data) {
     super();
     this._destination = data.destination;
     this._title = data.title;
-    this._offers = data.offers;
-    this._dateFrom = moment(data.dateFrom).format(`HH:mm`);
-    this._dateTo = moment(data.dateTo).format(`HH:mm`);
-    this._dateDuration = utils.getDuration(data.dateFrom, data.dateTo);
+    this._offers = data.offers || [];
+    this._dateFrom = getTime({dateFrom: data.dateFrom, dateTo: data.dateTo}).from;
+    this._dateTo = getTime({dateFrom: data.dateFrom, dateTo: data.dateTo}).to;
+    this._dateDuration = getTime({dateFrom: data.dateFrom, dateTo: data.dateTo}).duration;
     this._price = data.price;
 
     this._onClick = null;
@@ -41,7 +40,7 @@ export default class Point extends Component {
       ${this._offers.map((offer) => `
             ${offer.accepted ? `
             <li>
-              <button class="trip-point__offer">${offer.title} +€ ${offer.price}</button>
+              <button class="trip-point__offer">${offer.title || offer.name} +€ ${offer.price}</button>
             </li>` : ``}`).join(``)}
       </ul>
     </article>
@@ -59,8 +58,9 @@ export default class Point extends Component {
   update(data) {
     this._title = data.title;
     this._destination = data.destination;
-    this._dateFrom = data.dateFrom;
-    this._dateTo = data.dateTo;
+    this._dateFrom = getTime({dateFrom: data.dateFrom, dateTo: data.dateTo}).from;
+    this._dateTo = getTime({dateFrom: data.dateFrom, dateTo: data.dateTo}).to;
+    this._dateDuration = getTime({dateFrom: data.dateFrom, dateTo: data.dateTo}).duration;
     this._price = data.price;
     this._offers = data.offers;
   }

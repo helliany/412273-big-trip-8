@@ -1,5 +1,6 @@
 import Filter from '../views/filter';
 import renderPoints from './render-points';
+import renderTotalCost from '../presenters/render-total-cost';
 import moment from 'moment';
 
 const filterWrapper = document.querySelector(`.trip-filter`);
@@ -17,7 +18,7 @@ const filterPoints = (points, filterName) => {
   }
 };
 
-export default (filters, points) => {
+export default (filters, points, destinations, offers, provider) => {
   const fragment = document.createDocumentFragment();
   for (const filter of filters) {
     const FilterComponent = new Filter(filter);
@@ -25,7 +26,8 @@ export default (filters, points) => {
     FilterComponent.onFilter = (evt) => {
       const filterName = evt.target.id;
       const filteredPoints = filterPoints(points, filterName);
-      renderPoints(filteredPoints);
+      renderPoints(filteredPoints, destinations, offers, provider);
+      renderTotalCost(filteredPoints);
     };
     for (const el of [...FilterComponent.element.children]) {
       fragment.appendChild(el);

@@ -3,13 +3,13 @@ export default class ModelPoint {
     this.id = data[`id`];
     this.title = data[`type`];
     this.offers = data[`offers`] || [];
-    this.dateFrom = data[`date_from`];
-    this.dateTo = data[`date_to`];
+    this.dateFrom = new Date(data[`date_from`]);
+    this.dateTo = new Date(data[`date_to`]);
     this.price = data[`base_price`];
     this.destination = data[`destination`][`name`];
     this.description = data[`destination`][`description`] || ``;
     this.pictures = data[`destination`][`pictures`] || [];
-    this.isFavorite = data[`is_favorite`];
+    this.isFavorite = data[`is_favorite`] || false;
   }
 
   toRAW() {
@@ -24,7 +24,7 @@ export default class ModelPoint {
       'offers': this.offers,
       'date_from': this.dateFrom,
       'date_to': this.dateTo,
-      'base_price': this.price,
+      'base_price': Number(this.price),
       'is_favorite': this.isFavorite
     };
   }

@@ -1,10 +1,12 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-import {getIcon, getDurationHours} from '../utils.js';
+import {getIcon, getTime} from '../utils.js';
 import {ICONS_ARRAY, TRANSPORT} from '../constants';
+import getChartsTemplate from '../templates/charts-template';
 
 const BAR_HEIGHT = 55;
+const stats = document.querySelector(`#stats`);
 
 const renderMoneyChart = (data) => {
   const labels = Object.keys(data);
@@ -74,7 +76,8 @@ const renderMoneyChart = (data) => {
       },
       tooltips: {
         enabled: false,
-      }
+      },
+      maintainAspectRatio: false,
     }
   });
 };
@@ -147,7 +150,8 @@ const renderTransportChart = (data) => {
       },
       tooltips: {
         enabled: false,
-      }
+      },
+      maintainAspectRatio: false,
     }
   });
 };
@@ -163,7 +167,7 @@ const renderTimeChart = (data) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels,
+      labels: labels.map((label) => `${getIcon(ICONS_ARRAY, label)} ${label.toUpperCase()}`),
       datasets: [{
         data: time,
         backgroundColor: `#ffffff`,
@@ -220,7 +224,8 @@ const renderTimeChart = (data) => {
       },
       tooltips: {
         enabled: false,
-      }
+      },
+      maintainAspectRatio: false,
     }
   });
 };
@@ -229,17 +234,26 @@ export default (data) => {
   const transportNames = TRANSPORT.map((transportName) => transportName.name);
   const filteredTransportData = data.filter((it) => transportNames.includes(it.title));
 
-  const reduceArr = (reducedData) => reducedData.reduce((accumulator, it) => {
-    accumulator[it.title] = it.title;
-    accumulator[it.title] = +(it.price);
-    return accumulator;
+  const reduceArr = (reducedData) => reducedData.reduce((result, it) => {
+    if (!result[it.title]) {
+      result[it.title] = it.title;
+      result[it.title] = 0;
+    }
+    result[it.title] += Number(it.price);
+    return result;
   }, {});
 
-  const reduceTimeArr = (reducedData) => reducedData.reduce((accumulator, it) => {
-    accumulator[it.destination] = it.destination;
-    accumulator[it.destination] = +(getDurationHours(it.dateFrom, it.dateTo));
-    return accumulator;
+  const reduceTimeArr = (reducedData) => reducedData.reduce((result, it) => {
+    if (!result[it.title]) {
+      result[it.title] = it.title;
+      result[it.title] = 0;
+    }
+    result[it.title] += Number(getTime({dateFrom: it.dateFrom, dateTo: it.dateTo}).durationHs);
+    return result;
   }, {});
+
+  stats.textContent = ``;
+  stats.insertAdjacentHTML(`beforeend`, getChartsTemplate());
 
   renderMoneyChart(reduceArr(data));
   renderTransportChart(reduceArr(filteredTransportData));

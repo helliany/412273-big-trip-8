@@ -1,19 +1,19 @@
-const METHOD = {
-  get: `GET`,
-  post: `POST`,
-  put: `PUT`,
-  delete: `DELETE`
+const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
 };
 
-const MESSAGE = {
-  load: `Loading route...`,
-  error: `Something went wrong while loading your route info. Check your connection or try again later`,
+const MessageText = {
+  LOAD: `Loading route...`,
+  ERROR: `Something went wrong while loading your route info. Check your connection or try again later`,
 };
 
-const SERVER = {
-  authorization: `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`,
-  endPoint: `https://es8-demo-srv.appspot.com/big-trip`,
-  key: `points-store-key`,
+const Server = {
+  AUTHORIZATION: `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`,
+  END_POINT: `https://es8-demo-srv.appspot.com/big-trip`,
+  KEY: `points-store-key`,
 };
 
 const FILTERS = [
@@ -39,6 +39,7 @@ const ICONS = {
   'check-in': `🏨`,
   'sightseeing': `🏛`,
   'restaurant': `🍴`,
+  '': ``,
 };
 
 const TRANSPORT = [
@@ -62,4 +63,13 @@ const ICONS_ARRAY = [
   ...SERVICES
 ];
 
-export {METHOD, MESSAGE, SERVER, FILTERS, SORTS, ICONS, TRANSPORT, ICONS_ARRAY};
+export {
+  Method,
+  MessageText,
+  Server,
+  FILTERS,
+  SORTS,
+  ICONS,
+  TRANSPORT,
+  ICONS_ARRAY,
+};

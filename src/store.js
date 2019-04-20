@@ -16,9 +16,22 @@ export default class Store {
     return items[key];
   }
 
-  removeItem({key}) {
+  removeItem({key, id}) {
     const items = this.getAll();
-    delete items[key];
+    const itemsPoints = this.getItem({key});
+    const index = itemsPoints.findIndex((el) => el.id === id);
+    itemsPoints.splice(index, 1);
+    items[key] = itemsPoints;
+
+    this._storage.setItem(this._storeKey, JSON.stringify(items));
+  }
+
+  updateItem({key, id, data}) {
+    const items = this.getAll();
+    const itemsPoints = this.getItem({key});
+    const index = itemsPoints.findIndex((el) => el.id === id);
+    itemsPoints[index] = data;
+    items[key] = itemsPoints;
 
     this._storage.setItem(this._storeKey, JSON.stringify(items));
   }
@@ -34,8 +47,6 @@ export default class Store {
     try {
       return JSON.parse(items);
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(`Error parse items. Error: ${e}. Items: ${items}`);
       return emptyItems;
     }
   }

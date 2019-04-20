@@ -6,17 +6,16 @@ import moment from 'moment';
 export default class PointEdit extends Component {
   constructor(data, destinations, offers) {
     super();
-    this._title = data.title;
-    this._offers = data.offers;
-    this._dateFrom = moment(data.dateFrom).format(`HH:mm`);
-    this._dateTo = moment(data.dateTo).format(`HH:mm`);
-    this._price = data.price;
-    this._destination = data.destination;
-    this._description = data.description;
-    this._pictures = data.pictures;
-    this._isFavorite = data.isFavorite;
-
-    this._dueDate = data.dueDate;
+    this._id = data.id;
+    this._title = data.title || ``;
+    this._offers = data.offers || [];
+    this._dateFrom = data.dateFrom;
+    this._dateTo = data.dateTo;
+    this._price = data.price || 0;
+    this._destination = data.destination || ``;
+    this._description = data.description || ``;
+    this._pictures = data.pictures || [];
+    this._isFavorite = data.isFavorite || false;
 
     this._destinations = destinations;
     this._selectOffers = offers;
@@ -25,7 +24,7 @@ export default class PointEdit extends Component {
     this._onDelete = null;
     this._onSelect = null;
     this._onEsc = null;
-    this._dateFlatpickr = null;
+    this._dayFlatpickr = null;
     this._dateFromFlatpickr = null;
     this._dateToFlatpickr = null;
 
@@ -38,17 +37,17 @@ export default class PointEdit extends Component {
     this._onInputDestinationChange = this._onInputDestinationChange.bind(this);
     this._onLabelClick = this._onLabelClick.bind(this);
   }
-
   _processForm(formData) {
     const entry = {
       title: this._title,
       price: ``,
       destination: ``,
+      pictures: this._pictures,
+      description: this._description,
       offers: this._offers,
       dateFrom: ``,
       dateTo: ``,
       isFavorite: this._isFavorite,
-      dueDate: new Date(),
     };
     const pointEditMapper = PointEdit.createMapper(entry);
 
@@ -58,6 +57,9 @@ export default class PointEdit extends Component {
         pointEditMapper[property](value);
       }
     }
+
+    entry.dateFrom = new Date((moment(this._dateFrom).format(`YYYY-MM-DD`)) + `T` + entry.dateFrom).getTime();
+    entry.dateTo = new Date((moment(this._dateTo).format(`YYYY-MM-DD`)) + `T` + entry.dateTo).getTime();
 
     return entry;
   }
@@ -90,7 +92,7 @@ export default class PointEdit extends Component {
   }
 
   _onInputOfferChange(evt) {
-    const changedValue = this._offers.find((it) => it.title === evt.target.value);
+    const changedValue = this._offers.find((it) => (it.title || it.name) === evt.target.value);
     changedValue.accepted = !changedValue.accepted;
   }
 
@@ -136,7 +138,7 @@ export default class PointEdit extends Component {
         <header class="point__header">
           <label class="point__date">
             choose day
-            <input class="point__input" type="text" placeholder="MAR 18" name="day" value="${this._dueDate}">
+            <input class="point__input" type="text" placeholder="MAR 18" name="day" value="${moment.utc(this._dateFrom).format(`MMM DD`)}">
           </label>
           <div class="travel-way">
             <label class="travel-way__label" for="travel-way__toggle">${ICONS[this._title]}</label>
@@ -162,8 +164,8 @@ export default class PointEdit extends Component {
           </div>
           <div class="point__time">
             choose time
-            <input class="point__input" type="text" name="date-start" placeholder="${this._dateFrom}" value="${this._dateFrom}">
-            <input class="point__input" type="text" name="date-end" placeholder="${this._dateTo}" value="${this._dateTo}">
+            <input class="point__input" type="text" name="date-start" placeholder="00:00" value="${this._dateFrom}"><span class="point__span">—</span>
+            <input class="point__input" type="text" name="date-end" placeholder="00:00" value="${this._dateTo}">
           </div>
           <label class="point__price">
             write price
@@ -186,13 +188,13 @@ export default class PointEdit extends Component {
             <div class="point__offers-wrap">
               ${this._offers.map((offer) => `
               ${offer.accepted ? `
-              <input class="point__offers-input visually-hidden" type="checkbox" id="${offer.title}" name="offer" value="${offer.title}" checked>
-              <label for="${offer.title}" class="point__offers-label">
-                <span class="point__offer-service">${offer.title}</span> + €<span class="point__offer-price">${offer.price}</span>
+              <input class="point__offers-input visually-hidden" type="checkbox" id="${offer.title || offer.name}" name="offer" value="${offer.title || offer.name}" checked>
+              <label for="${offer.title || offer.name}" class="point__offers-label">
+                <span class="point__offer-service">${offer.title || offer.name}</span> + €<span class="point__offer-price">${offer.price}</span>
               </label>` : `
-              <input class="point__offers-input visually-hidden" type="checkbox" id="${offer.title}" name="offer" value="${offer.title}">
-              <label for="${offer.title}" class="point__offers-label">
-                <span class="point__offer-service">${offer.title}</span> + €<span class="point__offer-price">${offer.price}</span>
+              <input class="point__offers-input visually-hidden" type="checkbox" id="${offer.title || offer.name}" name="offer" value="${offer.title || offer.name}">
+              <label for="${offer.title || offer.name}" class="point__offers-label">
+                <span class="point__offer-service">${offer.title || offer.name}</span> + €<span class="point__offer-price">${offer.price}</span>
               </label>
               `}`).join(``)}
             </div>
@@ -226,9 +228,42 @@ export default class PointEdit extends Component {
       .addEventListener(`change`, this._onInputOfferChange);
     this._element.querySelector(`#destination`)
       .addEventListener(`change`, this._onInputDestinationChange);
-    this._dateFlatpickr = flatpickr(this._element.querySelector(`.point__date .point__input`), {altInput: true, mode: `range`, altFormat: `j M y`, dateFormat: `j M y`});
-    this._dateFromFlatpickr = flatpickr(this._element.querySelector(`input[name="date-start"]`), {defaultDate: this._dateFrom, enableTime: true, noCalendar: true, altInput: true, altFormat: `H:i`, dateFormat: `H:i`});
-    this._dateToFlatpickr = flatpickr(this._element.querySelector(`input[name="date-end"]`), {defaultDate: this._dateTo, enableTime: true, noCalendar: true, altInput: true, altFormat: `H:i`, dateFormat: `H:i`});
+    this._dayFlatpickr = flatpickr(this._element.querySelector(`input[name="day"]`),
+        {
+          dateFormat: `M d`,
+          defaultDate: this._dateFrom,
+          minDate: this._dateFrom,
+          onChange: (date) => {
+            this._dateFrom = date[0];
+            this._dateFromFlatpickr.config.minDate = date[0];
+            this._dateToFlatpickr.config.minDate = date[0];
+          }
+        });
+
+    this._dateFromFlatpickr = flatpickr(this._element.querySelector(`input[name="date-start"]`),
+        {
+          enableTime: true,
+          dateFormat: `H:i`,
+          defaultDate: this._dateFrom,
+          minDate: this._dateFrom,
+          [`time_24hr`]: true,
+          onChange: (date) => {
+            this._dateFrom = date[0];
+            this._dateToFlatpickr.config.minDate = date[0];
+          }
+        });
+
+    this._dateToFlatpickr = flatpickr(this._element.querySelector(`input[name="date-end"]`),
+        {
+          enableTime: true,
+          dateFormat: `H:i`,
+          defaultDate: this._dateTo,
+          minDate: this._dateFrom,
+          [`time_24hr`]: true,
+          onChange: (date) => {
+            this._dateTo = date[0];
+          }
+        });
   }
 
   unbind() {
@@ -245,6 +280,9 @@ export default class PointEdit extends Component {
       .removeEventListener(`change`, this._onInputOfferChange);
     this._element.querySelector(`#destination`)
       .removeEventListener(`change`, this._onInputDestinationChange);
+    this._dayFlatpickr.destroy();
+    this._dateFromFlatpickr.destroy();
+    this._dateToFlatpickr.destroy();
   }
 
   update(data) {
@@ -253,7 +291,6 @@ export default class PointEdit extends Component {
     this._offers = data.offers;
     this._dateFrom = data.dateFrom;
     this._dateTo = data.dateTo;
-    this._dueDate = data.dueDate;
     this._price = data.price;
   }
 
@@ -269,21 +306,12 @@ export default class PointEdit extends Component {
 
   static createMapper(target) {
     return {
-      'destination': (value) => {
-        target.destination = value;
-      },
-      'date-start': (value) => {
-        target.dateFrom = value;
-      },
-      'date-end': (value) => {
-        target.dateTo = value;
-      },
-      'price': (value) => {
-        target.price = value;
-      },
-      'favorite': (value) => {
-        target.isFavorite = value;
-      },
+      'type': (value) => (target.title = value),
+      'destination': (value) => (target.destination = value),
+      'date-start': (value) => (target.dateFrom = value),
+      'date-end': (value) => (target.dateTo = value),
+      'price': (value) => (target.price = value),
+      'favorite': (value) => (target.isFavorite = value),
     };
   }
 }

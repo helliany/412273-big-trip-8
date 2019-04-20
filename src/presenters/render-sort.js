@@ -1,5 +1,6 @@
 import Sort from '../views/sort';
 import renderPoints from './render-points';
+import {getTime} from '../utils.js';
 import lodash from 'lodash';
 
 const sortWrapper = document.querySelector(`.trip-sorting`);
@@ -9,15 +10,15 @@ const filterPoints = (points, label) => {
     case `sorting-event`:
       return points;
     case `sorting-time`:
-      return lodash.sortBy(points, [points.price]);
+      return lodash.reverse(lodash.sortBy(points, [(it) => getTime({dateFrom: it.dateFrom, dateTo: it.dateTo}).duration]));
     case `sorting-price`:
-      return lodash.sortBy(points, [points.price]);
+      return lodash.reverse(lodash.sortBy(points, [(it) => it.price]));
     default:
       return points;
   }
 };
 
-export default (sorts, points) => {
+export default (sorts, points, destinations, offers, provider) => {
   const fragment = document.createDocumentFragment();
 
   for (const sort of sorts) {
@@ -27,7 +28,7 @@ export default (sorts, points) => {
     SortComponent.onClick = (evt) => {
       const sortLabel = evt.target.id;
       const filteredPoints = filterPoints(points, sortLabel);
-      renderPoints(filteredPoints);
+      renderPoints(filteredPoints, destinations, offers, provider);
     };
     for (const el of [...SortComponent.element.children]) {
       fragment.appendChild(el);

@@ -24,10 +24,9 @@ export default class Provider {
           return point;
         });
     } else {
-      const point = data;
       this._needSync = true;
-      this._store.updateItem({key: `points`, id, data: point});
-      return Promise.resolve(ModelPoint.parsePoint(point));
+      this._store.updateItem({key: `points`, id, data});
+      return Promise.resolve(ModelPoint.parsePoint(data));
     }
   }
 
@@ -41,7 +40,7 @@ export default class Provider {
     } else {
       point.id = this._generateId();
       this._needSync = true;
-      this._store.setItem({key: point.id, item: point});
+      this._store.createItem({key: `points`, data: point});
       return Promise.resolve(ModelPoint.parsePoint(point));
     }
   }

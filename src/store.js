@@ -36,6 +36,18 @@ export default class Store {
     this._storage.setItem(this._storeKey, JSON.stringify(items));
   }
 
+  createItem({key, data}) {
+    const items = this.getAll();
+    const itemsPoints = this.getItem({key});
+    itemsPoints.push(data);
+    const index = itemsPoints.indexOf(data);
+
+    data.id = index.toString();
+    items[key] = itemsPoints;
+
+    this._storage.setItem(this._storeKey, JSON.stringify(items));
+  }
+
   getAll() {
     const emptyItems = {};
     const items = this._storage.getItem(this._storeKey);

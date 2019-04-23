@@ -1,5 +1,3 @@
-import {createElement} from "./utils";
-
 export default class Component {
   constructor() {
     if (new.target === Component) {
@@ -18,15 +16,19 @@ export default class Component {
     throw new Error(`You have to define template.`);
   }
 
+  update() {}
+
   render() {
-    this._element = createElement(this.template);
+    this._element = this._createElement(this.template);
     this.bind();
     return this._element;
   }
 
-  bind() { }
-
-  unbind() { }
+  rerender() {
+    this.unbind();
+    const newElement = this._element;
+    this.element.parentNode.replaceChild(this.render(), newElement);
+  }
 
   unrender() {
     this.unbind();
@@ -39,11 +41,13 @@ export default class Component {
     this._element = null;
   }
 
-  update() {}
-
-  rerender() {
-    this.unbind();
-    const newElement = this._element;
-    this.element.parentNode.replaceChild(this.render(), newElement);
+  _createElement(template) {
+    const newElement = document.createElement(`div`);
+    newElement.innerHTML = template;
+    return newElement.firstChild;
   }
+
+  bind() { }
+
+  unbind() { }
 }

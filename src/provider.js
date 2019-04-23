@@ -8,12 +8,47 @@ export default class Provider {
     this._needSync = false;
   }
 
-  _isOnline() {
-    return window.navigator.onLine;
+  getPoints() {
+    if (this._isOnline()) {
+      return this._api.getPoints()
+        .then((points) => {
+          this._store.setItem({key: `points`, item: points.map((it) => it.toRAW())});
+          return points;
+        });
+    } else {
+      const rawPointsMap = this._store.getItem({key: `points`});
+      const rawPoints = this._objectToArray(rawPointsMap);
+      const points = ModelPoint.parsePoints(rawPoints);
+      return Promise.resolve(points);
+    }
   }
 
-  _objectToArray(object) {
-    return object && Object.keys(object).map((id) => object[id]);
+  getDestinations() {
+    if (this._isOnline()) {
+      return this._api.getDestinations()
+        .then((destinations) => {
+          this._store.setItem({key: `destinations`, item: destinations});
+          return destinations;
+        });
+    } else {
+      const rawDestinationsMap = this._store.getItem({key: `destinations`});
+      const rawDestinations = this._objectToArray(rawDestinationsMap);
+      return Promise.resolve(rawDestinations);
+    }
+  }
+
+  getOffers() {
+    if (this._isOnline()) {
+      return this._api.getOffers()
+        .then((offers) => {
+          this._store.setItem({key: `offers`, item: offers});
+          return offers;
+        });
+    } else {
+      const rawOffersMap = this._store.getItem({key: `offers`});
+      const rawOffers = this._objectToArray(rawOffersMap);
+      return Promise.resolve(rawOffers);
+    }
   }
 
   updatePoint({id, data}) {
@@ -58,50 +93,15 @@ export default class Provider {
     }
   }
 
-  getPoints() {
-    if (this._isOnline()) {
-      return this._api.getPoints()
-        .then((points) => {
-          this._store.setItem({key: `points`, item: points.map((it) => it.toRAW())});
-          return points;
-        });
-    } else {
-      const rawPointsMap = this._store.getItem({key: `points`});
-      const rawPoints = this._objectToArray(rawPointsMap);
-      const points = ModelPoint.parsePoints(rawPoints);
-      return Promise.resolve(points);
-    }
-  }
-
-  getDestinations() {
-    if (this._isOnline()) {
-      return this._api.getDestinations()
-        .then((destinations) => {
-          this._store.setItem({key: `destinations`, item: destinations});
-          return destinations;
-        });
-    } else {
-      const rawDestinationsMap = this._store.getItem({key: `destinations`});
-      const rawDestinations = this._objectToArray(rawDestinationsMap);
-      return Promise.resolve(rawDestinations);
-    }
-  }
-
-  getOffers() {
-    if (this._isOnline()) {
-      return this._api.getOffers()
-        .then((offers) => {
-          this._store.setItem({key: `offers`, item: offers});
-          return offers;
-        });
-    } else {
-      const rawOffersMap = this._store.getItem({key: `offers`});
-      const rawOffers = this._objectToArray(rawOffersMap);
-      return Promise.resolve(rawOffers);
-    }
-  }
-
   syncPoints() {
     return this._api.syncPoints({points: this._objectToArray(this._store.getItem({key: `points`}))});
+  }
+
+  _isOnline() {
+    return window.navigator.onLine;
+  }
+
+  _objectToArray(object) {
+    return object && Object.keys(object).map((id) => object[id]);
   }
 }

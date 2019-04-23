@@ -4,11 +4,19 @@ export default class Store {
     this._storeKey = key;
   }
 
-  setItem({key, item}) {
-    const items = this.getAll();
-    items[key] = item;
+  getAll() {
+    const emptyItems = {};
+    const items = this._storage.getItem(this._storeKey);
 
-    this._storage.setItem(this._storeKey, JSON.stringify(items));
+    if (!items) {
+      return emptyItems;
+    }
+
+    try {
+      return JSON.parse(items);
+    } catch (e) {
+      return emptyItems;
+    }
   }
 
   getItem({key}) {
@@ -16,12 +24,9 @@ export default class Store {
     return items[key];
   }
 
-  removeItem({key, id}) {
+  setItem({key, item}) {
     const items = this.getAll();
-    const itemsPoints = this.getItem({key});
-    const index = itemsPoints.findIndex((el) => el.id === id);
-    itemsPoints.splice(index, 1);
-    items[key] = itemsPoints;
+    items[key] = item;
 
     this._storage.setItem(this._storeKey, JSON.stringify(items));
   }
@@ -48,18 +53,13 @@ export default class Store {
     this._storage.setItem(this._storeKey, JSON.stringify(items));
   }
 
-  getAll() {
-    const emptyItems = {};
-    const items = this._storage.getItem(this._storeKey);
+  removeItem({key, id}) {
+    const items = this.getAll();
+    const itemsPoints = this.getItem({key});
+    const index = itemsPoints.findIndex((el) => el.id === id);
+    itemsPoints.splice(index, 1);
+    items[key] = itemsPoints;
 
-    if (!items) {
-      return emptyItems;
-    }
-
-    try {
-      return JSON.parse(items);
-    } catch (e) {
-      return emptyItems;
-    }
+    this._storage.setItem(this._storeKey, JSON.stringify(items));
   }
 }

@@ -8,16 +8,16 @@ export default class BtnAddPoint extends Component {
     this._onBtnAddClick = this._onBtnAddClick.bind(this);
   }
 
-  _onBtnAddClick() {
-    return typeof this._onClick === `function` && this._onClick();
+  get template() {
+    return `<button class="trip-controls__new-event new-event">+ New Event</button>`;
   }
 
   set onClick(fn) {
     this._onClick = fn;
   }
 
-  get template() {
-    return `<button class="trip-controls__new-event new-event">+ New Event</button>`;
+  _onBtnAddClick() {
+    return typeof this._onClick === `function` && this._onClick();
   }
 
   bind() {

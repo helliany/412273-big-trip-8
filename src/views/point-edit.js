@@ -1,6 +1,6 @@
 import Component from "../component";
 import flatpickr from 'flatpickr';
-import {ICONS} from '../constants';
+import {ANIMATION_TIMEOUT, Icon} from '../constants';
 import moment from 'moment';
 
 export default class PointEdit extends Component {
@@ -37,100 +37,7 @@ export default class PointEdit extends Component {
     this._onInputDestinationChange = this._onInputDestinationChange.bind(this);
     this._onLabelClick = this._onLabelClick.bind(this);
   }
-  _processForm(formData) {
-    const entry = {
-      title: this._title,
-      price: ``,
-      destination: ``,
-      pictures: this._pictures,
-      description: this._description,
-      offers: this._offers,
-      dateFrom: ``,
-      dateTo: ``,
-      isFavorite: this._isFavorite,
-    };
-    const pointEditMapper = PointEdit.createMapper(entry);
 
-    for (const pair of formData.entries()) {
-      const [property, value] = pair;
-      if (pointEditMapper[property]) {
-        pointEditMapper[property](value);
-      }
-    }
-
-    entry.dateFrom = new Date((moment(this._dateFrom).format(`YYYY-MM-DD`)) + `T` + entry.dateFrom).getTime();
-    entry.dateTo = new Date((moment(this._dateTo).format(`YYYY-MM-DD`)) + `T` + entry.dateTo).getTime();
-
-    return entry;
-  }
-
-  _onSubmitButtonClick(evt) {
-    evt.preventDefault();
-    const formData = new FormData(this._element.querySelector(`.point-form`));
-    const newData = this._processForm(formData);
-    if (typeof this._onSubmit === `function`) {
-      this._onSubmit(newData);
-    }
-    this.update(newData);
-  }
-
-  _onDeleteButtonClick(evt) {
-    evt.preventDefault();
-    if (typeof this._onDelete === `function`) {
-      this._onDelete();
-    }
-  }
-
-  _onChangeFavorite() {
-    this._isFavorite = !this._isFavorite;
-  }
-
-  _onInputTitleChange() {
-    if (typeof this._onSelect === `function`) {
-      this._onSelect();
-    }
-  }
-
-  _onInputOfferChange(evt) {
-    const changedValue = this._offers.find((it) => (it.title || it.name) === evt.target.value);
-    changedValue.accepted = !changedValue.accepted;
-  }
-
-  _onInputDestinationChange(evt) {
-    const changedValue = this._destinations.find((it) => it.name === evt.target.value);
-    this._destination = changedValue.name;
-    this._description = changedValue.description;
-    this._pictures = changedValue.pictures;
-
-    this.rerender();
-  }
-
-  _onLabelClick() {
-    let selectWrapper = this._element.querySelector(`.travel-way__select`);
-    selectWrapper.classList.toggle(`active`);
-  }
-
-  _onEscPress(evt) {
-    if (typeof this._onSelect === `function` && evt.key === `Escape`) {
-      this._onEsc();
-    }
-  }
-
-  set onSubmit(fn) {
-    this._onSubmit = fn;
-  }
-
-  set onDelete(fn) {
-    this._onDelete = fn;
-  }
-
-  set onSelect(fn) {
-    this._onSelect = fn;
-  }
-
-  set onEsc(fn) {
-    this._onEsc = fn;
-  }
   get template() {
     return `
     <article class="point">
@@ -141,14 +48,14 @@ export default class PointEdit extends Component {
             <input class="point__input" type="text" placeholder="MAR 18" name="day" value="${moment.utc(this._dateFrom).format(`MMM DD`)}">
           </label>
           <div class="travel-way">
-            <label class="travel-way__label" for="travel-way__toggle">${ICONS[this._title]}</label>
+            <label class="travel-way__label" for="travel-way__toggle">${Icon[this._title]}</label>
             <input type="checkbox" class="travel-way__toggle visually-hidden" id="travel-way__toggle">
             <input type="text" class="travel-way__toggle visually-hidden" name="icon" id="travel-way__icon" value="${this._icon}">
             <div class="travel-way__select">
               <div class="travel-way__select-group">
                 ${this._selectOffers.map(({type}) => `
                   <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-${type}" name="travel-way" value="${type}">
-                  <label class="travel-way__select-label" for="travel-way-${type}">${ICONS[type]} ${type}</label>
+                  <label class="travel-way__select-label" for="travel-way-${type}">${Icon[type]} ${type}</label>
                 `).join(``)}
               </div>
             </div>
@@ -212,6 +119,119 @@ export default class PointEdit extends Component {
       </form>
     </article>
 	`.trim();
+  }
+
+  set onSubmit(fn) {
+    this._onSubmit = fn;
+  }
+
+  set onDelete(fn) {
+    this._onDelete = fn;
+  }
+
+  set onSelect(fn) {
+    this._onSelect = fn;
+  }
+
+  set onEsc(fn) {
+    this._onEsc = fn;
+  }
+
+  update(data) {
+    this._destination = data.destination;
+    this._title = data.title;
+    this._offers = data.offers;
+    this._dateFrom = data.dateFrom;
+    this._dateTo = data.dateTo;
+    this._price = data.price;
+  }
+
+  shake() {
+    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+    this._element.style.border = `2px solid #e41818`;
+    setTimeout(() => {
+      this._element.style.animation = ``;
+      this._element.style.border = ``;
+    }, ANIMATION_TIMEOUT);
+  }
+
+  _onSubmitButtonClick(e) {
+    e.preventDefault();
+    const formData = new FormData(this._element.querySelector(`.point-form`));
+    const newData = this._processForm(formData);
+    if (typeof this._onSubmit === `function`) {
+      this._onSubmit(newData);
+    }
+    this.update(newData);
+  }
+
+  _onDeleteButtonClick(e) {
+    e.preventDefault();
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
+    }
+  }
+
+  _onChangeFavorite() {
+    this._isFavorite = !this._isFavorite;
+  }
+
+  _onInputTitleChange() {
+    if (typeof this._onSelect === `function`) {
+      this._onSelect();
+    }
+  }
+
+  _onInputOfferChange(e) {
+    const changedValue = this._offers.find((it) => (it.title || it.name) === e.target.value);
+    changedValue.accepted = !changedValue.accepted;
+  }
+
+  _onInputDestinationChange(e) {
+    const changedValue = this._destinations.find((it) => it.name === e.target.value);
+    this._destination = changedValue.name;
+    this._description = changedValue.description;
+    this._pictures = changedValue.pictures;
+
+    this.rerender();
+  }
+
+  _onLabelClick() {
+    let selectWrapper = this._element.querySelector(`.travel-way__select`);
+    selectWrapper.classList.toggle(`active`);
+  }
+
+  _onEscPress(e) {
+    if (typeof this._onSelect === `function` && e.key === `Escape`) {
+      this._onEsc();
+    }
+  }
+
+  _processForm(formData) {
+    const entry = {
+      title: this._title,
+      price: ``,
+      destination: ``,
+      pictures: this._pictures,
+      description: this._description,
+      offers: this._offers,
+      dateFrom: ``,
+      dateTo: ``,
+      isFavorite: this._isFavorite,
+    };
+    const pointEditMapper = PointEdit.createMapper(entry);
+
+    for (const pair of formData.entries()) {
+      const [property, value] = pair;
+      if (pointEditMapper[property]) {
+        pointEditMapper[property](value);
+      }
+    }
+
+    entry.dateFrom = new Date((moment(this._dateFrom).format(`YYYY-MM-DD`)) + `T` + entry.dateFrom).getTime();
+    entry.dateTo = new Date((moment(this._dateTo).format(`YYYY-MM-DD`)) + `T` + entry.dateTo).getTime();
+
+    return entry;
   }
 
   bind() {
@@ -283,25 +303,6 @@ export default class PointEdit extends Component {
     this._dayFlatpickr.destroy();
     this._dateFromFlatpickr.destroy();
     this._dateToFlatpickr.destroy();
-  }
-
-  update(data) {
-    this._destination = data.destination;
-    this._title = data.title;
-    this._offers = data.offers;
-    this._dateFrom = data.dateFrom;
-    this._dateTo = data.dateTo;
-    this._price = data.price;
-  }
-
-  shake() {
-    const ANIMATION_TIMEOUT = 600;
-    this._element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
-    this._element.style.border = `2px solid #e41818`;
-    setTimeout(() => {
-      this._element.style.animation = ``;
-      this._element.style.border = ``;
-    }, ANIMATION_TIMEOUT);
   }
 
   static createMapper(target) {

@@ -2,7 +2,7 @@ import Point from '../views/point';
 import PointEdit from '../views/point-edit';
 import {getIcon, getNewData} from '../utils.js';
 import renderTotalCost from './render-total-cost';
-import {ICONS_ARRAY} from '../constants';
+import {icons} from '../constants';
 import switchBtns from '../switch-btns';
 
 const pointWrapper = document.querySelector(`.trip-day__items`);
@@ -96,7 +96,7 @@ export default (points, destinations, offers, provider) => {
       const iconInput = PointEditComponent.element.querySelector(`#travel-way__icon`);
 
       const title = PointEditComponent.element.querySelector(`.travel-way__select-input:checked`).value;
-      const icon = getIcon(ICONS_ARRAY, title);
+      const icon = getIcon(icons, title);
 
       toggleInput.value = title;
       iconInput.value = icon;

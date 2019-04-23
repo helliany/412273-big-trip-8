@@ -1,17 +1,5 @@
 import ModelPoint from './model/model-point';
-import {Method} from './constants';
-
-const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    throw new Error(`${response.status}: ${response.statusText}`);
-  }
-};
-
-const toJSON = (response) => {
-  return response.json();
-};
+import {Method, ResponseCode} from './constants';
 
 export default class Api {
   constructor({endPoint, authorization}) {
@@ -21,18 +9,18 @@ export default class Api {
 
   getPoints() {
     return this._load({url: `points`})
-      .then(toJSON)
+      .then(this._toJSON)
       .then(ModelPoint.parsePoints);
   }
 
   getDestinations() {
     return this._load({url: `destinations`})
-      .then(toJSON);
+      .then(this._toJSON);
   }
 
   getOffers() {
     return this._load({url: `offers`})
-      .then(toJSON);
+      .then(this._toJSON);
   }
 
   createPoint({point}) {
@@ -42,7 +30,7 @@ export default class Api {
       body: JSON.stringify(point),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(toJSON)
+      .then(this._toJSON)
       .then(ModelPoint.parsePoint);
   }
 
@@ -53,7 +41,7 @@ export default class Api {
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(toJSON)
+      .then(this._toJSON)
       .then(ModelPoint.parsePoint);
   }
 
@@ -71,14 +59,26 @@ export default class Api {
       body: JSON.stringify(points),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(toJSON);
+      .then(this._toJSON);
+  }
+
+  _checkStatus(response) {
+    if (response.status >= ResponseCode.SUCCESS && response.status < ResponseCode.REDIRECT) {
+      return response;
+    } else {
+      throw new Error(`${response.status}: ${response.statusText}`);
+    }
+  }
+
+  _toJSON(response) {
+    return response.json();
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(checkStatus)
+      .then(this._checkStatus)
       .catch((err) => {
         throw err;
       });

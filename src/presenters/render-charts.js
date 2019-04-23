@@ -2,10 +2,9 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import {getIcon, getTime} from '../utils.js';
-import {ICONS_ARRAY, TRANSPORT} from '../constants';
+import {BAR_HEIGHT, icons, transportTypes} from '../constants';
 import getChartsTemplate from '../templates/charts-template';
 
-const BAR_HEIGHT = 55;
 const stats = document.querySelector(`#stats`);
 
 const renderMoneyChart = (data) => {
@@ -19,7 +18,7 @@ const renderMoneyChart = (data) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: labels.map((label) => `${getIcon(ICONS_ARRAY, label)} ${label.toUpperCase()}`),
+      labels: labels.map((label) => `${getIcon(icons, label)} ${label.toUpperCase()}`),
       datasets: [{
         data: prices,
         backgroundColor: `#ffffff`,
@@ -93,7 +92,7 @@ const renderTransportChart = (data) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: labels.map((label) => `${getIcon(TRANSPORT, label)} ${label.toUpperCase()}`),
+      labels: labels.map((label) => `${getIcon(transportTypes, label)} ${label.toUpperCase()}`),
       datasets: [{
         data: prices.map((price) => price / 10),
         backgroundColor: `#ffffff`,
@@ -167,7 +166,7 @@ const renderTimeChart = (data) => {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: labels.map((label) => `${getIcon(ICONS_ARRAY, label)} ${label.toUpperCase()}`),
+      labels: labels.map((label) => `${getIcon(icons, label)} ${label.toUpperCase()}`),
       datasets: [{
         data: time,
         backgroundColor: `#ffffff`,
@@ -231,7 +230,7 @@ const renderTimeChart = (data) => {
 };
 
 export default (data) => {
-  const transportNames = TRANSPORT.map((transportName) => transportName.name);
+  const transportNames = transportTypes.map((transportName) => transportName.name);
   const filteredTransportData = data.filter((it) => transportNames.includes(it.title));
 
   const reduceArr = (reducedData) => reducedData.reduce((result, it) => {

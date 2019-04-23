@@ -1,16 +1,5 @@
 import moment from 'moment';
 
-const getRandomNumber = (max, min) => {
-  return Math.floor(Math.random() * (max - min)) + min;
-};
-
-const getRandomValue = (data, max, min, split = `,`) => {
-  const arr = data.split(split);
-  const n = getRandomNumber(max, min);
-  const getIndex = () => Math.floor(Math.random() * arr.length);
-  return [...new Array(n)].map(() => arr[getIndex()].trim());
-};
-
 const getTime = ({dateFrom, dateTo}) => {
   const from = moment(dateFrom);
   const to = moment(dateTo);
@@ -37,17 +26,8 @@ const getNewData = (elements, i, data) => {
   return elements[i];
 };
 
-const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-  return newElement.firstChild;
-};
-
 export {
-  getRandomNumber,
-  getRandomValue,
   getTime,
   getIcon,
   getNewData,
-  createElement,
 };

@@ -8,14 +8,14 @@ export default (points) => {
     document.querySelector(`.trip__total-cost`).remove();
   }
   const pointsOffers = lodash.map(points, `offers`);
-  const offersPrice = [];
+  const offersPrices = [];
 
   for (const offer of pointsOffers) {
-    offersPrice.push(...lodash.filter(offer, `accepted`));
+    offersPrices.push(...lodash.filter(offer, `accepted`));
   }
 
   const resultPrice = lodash.sumBy(points, `price`);
-  const resultOffersCost = lodash.sumBy(offersPrice, `price`);
+  const resultOffersCost = lodash.sumBy(offersPrices, `price`);
 
   const resultCost = resultPrice + resultOffersCost;
 

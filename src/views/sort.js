@@ -10,16 +10,6 @@ export default class Sort extends Component {
     this._onInputSortClick = this._onInputSortClick.bind(this);
   }
 
-  _onInputSortClick(evt) {
-    if (typeof this._onClick === `function`) {
-      this._onClick(evt);
-    }
-  }
-
-  set onClick(fn) {
-    this._onClick = fn;
-  }
-
   get template() {
     return `
       <div>
@@ -27,6 +17,16 @@ export default class Sort extends Component {
         <label class="trip-sorting__item trip-sorting__item--${this._label}" for="sorting-${this._label}">${this._label}</label>
       </div>
     `.trim();
+  }
+
+  set onClick(fn) {
+    this._onClick = fn;
+  }
+
+  _onInputSortClick(e) {
+    if (typeof this._onClick === `function`) {
+      this._onClick(e);
+    }
   }
 
   bind() {

@@ -1,5 +1,5 @@
 import Component from "../component";
-import {ICONS} from '../constants';
+import {Icon} from '../constants';
 import {getTime} from '../utils';
 
 export default class Point extends Component {
@@ -17,19 +17,10 @@ export default class Point extends Component {
     this._onPointClick = this._onPointClick.bind(this);
   }
 
-  _onPointClick() {
-    if (typeof this._onClick === `function`) {
-      this._onClick();
-    }
-  }
-
-  set onClick(fn) {
-    this._onClick = fn;
-  }
   get template() {
     return `
     <article class="trip-point">
-      <i class="trip-icon">${ICONS[this._title]}</i>
+      <i class="trip-icon">${Icon[this._title]}</i>
       <h3 class="trip-point__title">${this._title} to ${this._destination}</h3>
       <p class="trip-point__schedule">
         <span class="trip-point__timetable">${this._dateFrom} — ${this._dateTo}</span>
@@ -47,12 +38,8 @@ export default class Point extends Component {
 	`.trim();
   }
 
-  bind() {
-    this._element.addEventListener(`click`, this._onPointClick);
-  }
-
-  unbind() {
-    this._element.removeEventListener(`click`, this._onPointClick);
+  set onClick(fn) {
+    this._onClick = fn;
   }
 
   update(data) {
@@ -63,5 +50,19 @@ export default class Point extends Component {
     this._dateDuration = getTime({dateFrom: data.dateFrom, dateTo: data.dateTo}).duration;
     this._price = data.price;
     this._offers = data.offers;
+  }
+
+  _onPointClick() {
+    if (typeof this._onClick === `function`) {
+      this._onClick();
+    }
+  }
+
+  bind() {
+    this._element.addEventListener(`click`, this._onPointClick);
+  }
+
+  unbind() {
+    this._element.removeEventListener(`click`, this._onPointClick);
   }
 }

@@ -9,16 +9,6 @@ export default class Filter extends Component {
     this._onFilterChange = this._onFilterChange.bind(this);
   }
 
-  set onFilter(fn) {
-    this._onFilter = fn;
-  }
-
-  _onFilterChange(evt) {
-    if (typeof this._onFilter === `function`) {
-      this._onFilter(evt);
-    }
-  }
-
   get template() {
     return `
       <div>
@@ -26,6 +16,16 @@ export default class Filter extends Component {
         <label class="trip-filter__item" for="filter-${this._caption.toLowerCase()}">${this._caption}</label>
       </div>  
     `.trim();
+  }
+
+  set onFilter(fn) {
+    this._onFilter = fn;
+  }
+
+  _onFilterChange(e) {
+    if (typeof this._onFilter === `function`) {
+      this._onFilter(e);
+    }
   }
 
   bind() {

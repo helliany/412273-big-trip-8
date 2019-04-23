@@ -8,7 +8,7 @@ import Message from './views/message';
 import Api from './api';
 import Provider from './provider';
 import Store from './store';
-import {MessageText, Server, FILTERS, SORTS} from './constants';
+import {MessageText, Server, filters, sorts} from './constants';
 
 import uuid from 'uuid/v4';
 
@@ -40,8 +40,8 @@ const initApp = () => {
       offers
     ]) => {
       if (points.length && destinations.length && offers.length) {
-        renderFilters(FILTERS, points, destinations, offers, provider);
-        renderSort(SORTS, points, destinations, offers, provider);
+        renderFilters(filters, points, destinations, offers, provider);
+        renderSort(sorts, points, destinations, offers, provider);
         renderPoints(points, destinations, offers, provider);
         renderNewPoint(destinations, offers, provider);
         renderTotalCost(points);

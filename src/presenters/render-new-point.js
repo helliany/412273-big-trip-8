@@ -4,7 +4,7 @@ import ModelPoint from '../model/model-point';
 import renderPoints from './render-points';
 import renderTotalCost from './render-total-cost';
 import {getIcon} from '../utils.js';
-import {ICONS_ARRAY} from '../constants';
+import {icons} from '../constants';
 import lodash from 'lodash';
 
 export default (destinations, offers, provider) => {
@@ -73,7 +73,7 @@ export default (destinations, offers, provider) => {
       const title = PointEditComponent.element.querySelector(`.travel-way__select-input:checked`).value;
       const destination = PointEditComponent.element.querySelector(`.point__destination-input`).value;
       const price = PointEditComponent.element.querySelector(`[name=price]`).value;
-      const icon = getIcon(ICONS_ARRAY, title);
+      const icon = getIcon(icons, title);
 
       toggleInput.value = title;
       iconInput.value = icon;

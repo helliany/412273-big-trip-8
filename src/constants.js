@@ -1,8 +1,16 @@
+const BAR_HEIGHT = 55;
+const ANIMATION_TIMEOUT = 600;
+
 const Method = {
   GET: `GET`,
   POST: `POST`,
   PUT: `PUT`,
   DELETE: `DELETE`
+};
+
+const ResponseCode = {
+  SUCCESS: 200,
+  REDIRECT: 300,
 };
 
 const MessageText = {
@@ -16,19 +24,19 @@ const Server = {
   KEY: `points-store-key`,
 };
 
-const FILTERS = [
+const filters = [
   `Everything`,
   `Future`,
   `Past`,
 ];
 
-const SORTS = [
+const sorts = [
   `event`,
   `time`,
   `price`,
 ];
 
-const ICONS = {
+const Icon = {
   'taxi': `🚕`,
   'bus': `🚌`,
   'train': `🚂`,
@@ -42,7 +50,7 @@ const ICONS = {
   '': ``,
 };
 
-const TRANSPORT = [
+const transportTypes = [
   {name: `taxi`, icon: `🚕`},
   {name: `bus`, icon: `🚌`},
   {name: `train`, icon: `🚂`},
@@ -52,24 +60,27 @@ const TRANSPORT = [
   {name: `flight`, icon: `✈️`},
 ];
 
-const SERVICES = [
+const services = [
   {name: `check-in`, icon: `🏨`},
   {name: `sightseeing`, icon: `🏛️`},
   {name: `restaurant`, icon: `🍴`},
 ];
 
-const ICONS_ARRAY = [
-  ...TRANSPORT,
-  ...SERVICES
+const icons = [
+  ...transportTypes,
+  ...services
 ];
 
 export {
+  BAR_HEIGHT,
+  ANIMATION_TIMEOUT,
   Method,
+  ResponseCode,
   MessageText,
   Server,
-  FILTERS,
-  SORTS,
-  ICONS,
-  TRANSPORT,
-  ICONS_ARRAY,
+  filters,
+  sorts,
+  Icon,
+  transportTypes,
+  icons,
 };
